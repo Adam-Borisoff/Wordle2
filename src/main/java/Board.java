@@ -8,106 +8,103 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Highlighter;
-import javax.swing.text.Highlighter.HighlightPainter;
+
 
 public class Board extends JFrame {
-    public int guesses;
-    public Character character;
-    public int iterations = 0;
-    public int count;
-    public String word = new String();
+
+
+
+
+
+    public int usage =0;
+    public String fiveword;
 
     public Board() {
         WordReader fiveletter = new WordReader();
-        this.word = fiveletter.WordReader(5);
-        this.setDefaultCloseOperation(3);
-        this.setSize(500, 800);
+       fiveword = fiveletter.WordReader(5);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+       setSize(500, 1000);
         final JButton five = new JButton("5");
         final JButton seven = new JButton("7");
         final JButton submit = new JButton("submit");
-        final JTextField answer = new JTextField();
-        final JTextField values = new JTextField("_ _ _ _ _");
+       JTextField answer = new JTextField("");
+
         final JTextField guess = new JTextField();
-        values.setEditable(false);
-        this.setLayout(new GridLayout(1, 4));
-        this.add(five);
-        this.add(seven);
-        this.setVisible(true);
-        this.guesses = 5;
-        guess.setFont(new Font("Serif", 1, 30));
-        answer.setFont(new Font("Serif", 1, 30));
-        values.setFont(new Font("Serif", 1, 30));
-        guess.setText("Guesses left: " + String.valueOf(this.guesses));
-        guess.setEditable(false);
+
+       setLayout(new GridLayout(2, 6));
+        add(five);
+        add(seven);
+        setVisible(true);
+
+
+
+            answer.setFont(new Font("Serif", Font.BOLD, 30));
+
+
+
         submit.addActionListener(new ActionListener() {
+            final JTextField[] values = new JTextField[5];
+
             public void actionPerformed(ActionEvent e) {
-
-                DefaultHighlighter highlighter = (DefaultHighlighter)values.getHighlighter();
-                highlighter.setDrawsLayeredHighlights(false);
-                HighlightPainter greenpainter = new DefaultHighlighter.DefaultHighlightPainter(Color.GREEN); // Create a HighlightPainter with the desired color
-                HighlightPainter yellowpainter = new DefaultHighlighter.DefaultHighlightPainter(Color.YELLOW);
-                HighlightPainter redpainter = new DefaultHighlighter.DefaultHighlightPainter(Color.RED);
-                new DefaultHighlighter.DefaultHighlightPainter(Color.YELLOW);
-                new DefaultHighlighter.DefaultHighlightPainter(Color.RED);
-
-                --Board.this.guesses;
-                StringBuilder result = new StringBuilder();
-                guess.setText("Guesses left: " + String.valueOf(Board.this.guesses));
-                values.setText(answer.getText());
-                highlighter.removeAllHighlights();
-                for(int amount = 0; amount < 5; ++amount) {
-                    for (int iterations = 0; iterations < 5; ++iterations) {
-                        character = word.charAt(iterations);
-                        if (answer.getText().charAt(amount) == word.charAt(amount)) {
-                            try {
-                                highlighter.addHighlight(amount, amount + 1, greenpainter);
-                            } catch (BadLocationException ex) {
-                                throw new RuntimeException(ex);
-                            }
-                            break;
-                        }
-                      else if (answer.getText().charAt(amount) == word.charAt(iterations)) {
-                            try {
-
-                                highlighter.addHighlight(iterations, iterations + 1, yellowpainter);
-                            } catch (BadLocationException ex) {
-                                throw new RuntimeException(ex);
-                            }
-                            break;
-                        }
-                      else  {
-                            try {
-                                highlighter.addHighlight(amount, amount + 1, redpainter);
-                            } catch (BadLocationException ex) {
-                                throw new RuntimeException(ex);
-                            }
-                        }
-                    }
-
-                    }
-
-
-            }
-        });
-        five.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                Board.this.remove(five);
-                Board.this.remove(seven);
+                JTextField currentguess = new JTextField(answer.getText());
+                System.out.println(answer.getText());
+                values[usage] =currentguess;
+                values[usage].setFont(new Font("Serif", Font.BOLD, 30));
+                Board.this.add(values[usage]);
                 Board.this.setVisible(false);
                 Board.this.setVisible(true);
-                Board.this.setLayout(new GridLayout(4, 1));
-                Board.this.add(guess);
-                Board.this.add(values);
-                Board.this.add(answer);
-                Board.this.add(submit);
-                Board.this.setVisible(true);
-            }
+
+
+                Highlighter highlighter = values[usage].getHighlighter();
+                        Highlighter.HighlightPainter greenpainter = new DefaultHighlighter.DefaultHighlightPainter(Color.GREEN);
+                        Highlighter.HighlightPainter yellowpainter = new DefaultHighlighter.DefaultHighlightPainter(Color.YELLOW);
+                        Highlighter.HighlightPainter redpainter = new DefaultHighlighter.DefaultHighlightPainter(Color.RED);
+                        for (int i = 0; i < 5; i++) {
+                            if (values[usage].getText().charAt(i) == fiveword.charAt(i)) {
+                                try {
+                                    highlighter.addHighlight(i, i + 1, greenpainter);
+                                } catch (BadLocationException ex) {
+                                    throw new RuntimeException(ex);
+                                }
+                            }
+                            for (int k = 0; k < 5; k++) {
+                                if (values[usage].getText().charAt(i) == fiveword.charAt(k) && i != k) {
+                                    try {
+                                        highlighter.addHighlight(i, i + 1, yellowpainter);
+                                    } catch (BadLocationException ex) {
+                                        throw new RuntimeException(ex);
+                                    }
+
+                                }
+                                else{
+                                    try {
+                                        highlighter.addHighlight(i, i + 1, redpainter);
+
+                                    } catch (BadLocationException ex) {
+                                        throw new RuntimeException(ex);
+                                    }
+                                }
+                            }
+                            }
+                        }
+        });
+        five.addActionListener(e -> {
+
+            Board.this.remove(five);
+            Board.this.remove(seven);
+            Board.this.setVisible(false);
+            Board.this.setVisible(true);
+            Board.this.setLayout(new GridLayout(9, 1));
+
+            Board.this.add(answer);
+
+            Board.this.add(guess);
+            Board.this.add(submit);
+            Board.this.setVisible(true);
         });
     }
 }
